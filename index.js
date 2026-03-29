@@ -14,24 +14,18 @@ app.use(express.json());
 app.use(cors());
 
 // ------------------- Cloudinary Setup -------------------
-const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-
-cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.API_KEY,
-    api_secret: process.env.API_SECRET,
-    secure: true
-});
+const { v2: cloudinary } = require('cloudinary');
+const CloudinaryStorage = require('multer-storage-cloudinary');
 
 const storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
+    cloudinary: cloudinary, // pass the v2 instance
     params: {
         folder: 'ecommerce_products',
-        format: async (req, file) => 'png',
+        allowed_formats: ['jpg', 'jpeg', 'png'],
         public_id: (req, file) => `${file.fieldname}_${Date.now()}`,
     },
 });
+
 const upload = multer({ storage });
 
 // ------------------- MongoDB Connection -------------------
